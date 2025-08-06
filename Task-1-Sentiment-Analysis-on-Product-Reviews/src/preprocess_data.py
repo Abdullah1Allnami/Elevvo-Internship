@@ -2,6 +2,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from nltk.tokenize import WordNetLemmatizer
 
 
 def preprocess_data(df):
@@ -28,6 +29,11 @@ def preprocess_data(df):
 def clean_text(X):
     # Example cleaning function, modify as needed
     X = X.str.replace(r"[^a-zA-Z\s]", "", regex=True)
+    lemmaizer = WordNetLemmatizer()
+    X = X.apply(lambda x: " ".join([lemmaizer.lemmatize(word) for word in x.split()]))
+    X = X.str.lower()
+    X = X.str.strip()
+    X = X.str.replace(r"\s+", " ", regex=True)
     print("Text data cleaned successfully.")
     return X
 

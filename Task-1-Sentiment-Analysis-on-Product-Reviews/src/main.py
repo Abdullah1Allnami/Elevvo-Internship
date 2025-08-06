@@ -4,6 +4,7 @@ from src.data_downloader import data_downloader
 from src.preprocess_data import preprocess_data
 from src.train_models import train_models
 from tests.evaluate import evaluate_model
+from src.visualize_most_fre_words import visualize_most_frequent_words
 
 # Suppress future warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -17,7 +18,7 @@ def main():
     print("Data downloaded successfully.")
 
     # Step 2: Load and limit dataset (for debugging or testing)
-    df = pd.read_csv("/kaggle/input/imdb-dataset-of-50k-movie-reviews/IMDB Dataset.csv")
+    df = pd.read_csv("./data/IMDB Dataset.csv")
     # df = df.head(10)
     print("Data loaded successfully.")
 
@@ -45,6 +46,10 @@ def main():
 
     print("Model evaluation completed.")
     print("Accuracy Results:", accuracy_results)
+
+    # Visualize the most frequent positive and negative words
+    visualize_most_frequent_words(df)
+
     print("*" * 20, "Return", "*" * 20)
 
 
