@@ -33,7 +33,7 @@ Task-1-Sentiment-Analysis-on-Product-Reviews/
 ## Installation
 
 ```bash
-git clone <repo-url>
+git clone [<repo-url>](https://github.com/Abdullah1Allnami/Elevvo-Internship.git)
 cd Task-1-Sentiment-Analysis-on-Product-Reviews
 pip install -r requirements.txt
 ```
