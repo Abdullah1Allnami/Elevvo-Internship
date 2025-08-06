@@ -24,27 +24,11 @@ def get_machine_learning_models():
 
     models = {
         "Logistic Regression": LogisticRegression(max_iter=1000),
-        # "Support Vector Machine": SVC(),
         "Random Forest": RandomForestClassifier(),
         "Naive Bayes": MultinomialNB(),
     }
 
     return models
-
-
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import (
-    Dense,
-    Dropout,
-    Embedding,
-    LSTM,
-    GRU,
-    Input,
-    GlobalAveragePooling1D,
-    MultiHeadAttention,
-    LayerNormalization,
-    Add,
-)
 
 
 def get_deep_learning_models(vocab_size=20000, max_len=500, embed_dim=128, num_heads=4):
@@ -56,7 +40,7 @@ def get_deep_learning_models(vocab_size=20000, max_len=500, embed_dim=128, num_h
     # 1. Simple Feedforward
     models["Simple Feedforward"] = Sequential(
         [
-            Dense(128, activation="relu", input_shape=(5000,)),
+            Dense(128, activation="relu", input_shape=(500,)),
             Dropout(0.5),
             Dense(1, activation="sigmoid"),
         ]
