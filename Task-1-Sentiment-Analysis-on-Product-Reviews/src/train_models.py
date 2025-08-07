@@ -20,7 +20,7 @@ def train_models(X_tfidf_train, y_train, X_seq_train):
         model.compile(
             optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]
         )
-        model.fit(X_seq_train, y_train, epochs=20, batch_size=32, verbose=0)
+        model.fit(X_seq_train, y_train, epochs=10, batch_size=32, verbose=0)
         print(f"{name} model trained successfully.")
 
     print("All models trained successfully.")

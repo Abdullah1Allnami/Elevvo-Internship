@@ -32,7 +32,7 @@ def get_machine_learning_models():
     return models
 
 
-def get_deep_learning_models(vocab_size=20000, max_len=700, embed_dim=512, num_heads=4):
+def get_deep_learning_models(vocab_size=20000, max_len=500, embed_dim=128, num_heads=4):
     """
     Returns a dictionary of deep learning models with their names as keys.
     """
@@ -41,13 +41,8 @@ def get_deep_learning_models(vocab_size=20000, max_len=700, embed_dim=512, num_h
     # 1. Simple Feedforward
     models["Simple Feedforward"] = Sequential(
         [
-            # lets increase the complexity of the model
-            Dense(128, activation="relu", input_shape=(max_len,)),
+            Dense(128, activation="relu", input_shape=(500,)),
             Dropout(0.5),
-            BatchNormalization(),
-            Dense(64, activation="relu"),
-            Dropout(0.5),
-            BatchNormalization(),
             Dense(1, activation="sigmoid"),
         ]
     )
@@ -55,32 +50,16 @@ def get_deep_learning_models(vocab_size=20000, max_len=700, embed_dim=512, num_h
     # 2. LSTM Model
     lstm_input = Input(shape=(max_len,))
     x = Embedding(input_dim=vocab_size, output_dim=embed_dim)(lstm_input)
-    x = LSTM(128)(x)
+    x = LSTM(64)(x)
     x = Dropout(0.5)(x)
-    x = BatchNormalization()(x)
-    x = Dense(64, activation="relu")(x)
-    x = Dropout(0.5)(x)
-    x = BatchNormalization()(x)
-    x = Dense(32, activation="relu")(x)
-    x = Dropout(0.5)(x)
-    x = BatchNormalization()(x)
-    # Final output layer
     output = Dense(1, activation="sigmoid")(x)
     models["LSTM"] = Model(inputs=lstm_input, outputs=output)
 
     # 3. GRU Model
     gru_input = Input(shape=(max_len,))
     x = Embedding(input_dim=vocab_size, output_dim=embed_dim)(gru_input)
-    x = GRU(256)(x)
+    x = GRU(64)(x)
     x = Dropout(0.5)(x)
-    x = BatchNormalization()(x)
-    x = Dense(128, activation="relu")(x)
-    x = Dropout(0.5)(x)
-    x = BatchNormalization()(x)
-    x = Dense(64, activation="relu")(x)
-    x = Dropout(0.5)(x)
-    x = BatchNormalization()(x)
-    # Final output layer
     output = Dense(1, activation="sigmoid")(x)
     models["GRU"] = Model(inputs=gru_input, outputs=output)
 
@@ -88,15 +67,10 @@ def get_deep_learning_models(vocab_size=20000, max_len=700, embed_dim=512, num_h
     trans_input = Input(shape=(max_len,))
     x = Embedding(input_dim=vocab_size, output_dim=embed_dim)(trans_input)
     attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=embed_dim)(x, x)
-    x = LayerNormalization(epsilon=1e-6)(attn_output + x)  # Residual connection
+    x = Add()([x, attn_output])
+    x = LayerNormalization()(x)
     x = GlobalAveragePooling1D()(x)
-    x = Dense(128, activation="relu")(x)
     x = Dropout(0.5)(x)
-    x = BatchNormalization()(x)
-    x = Dense(64, activation="relu")(x)
-    x = Dropout(0.5)(x)
-    x = BatchNormalization()(x)
-    # Final output layer
     output = Dense(1, activation="sigmoid")(x)
     models["Transformer-Attention"] = Model(inputs=trans_input, outputs=output)
 
