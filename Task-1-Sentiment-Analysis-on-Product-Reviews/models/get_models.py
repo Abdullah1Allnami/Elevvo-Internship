@@ -32,7 +32,7 @@ def get_machine_learning_models():
     return models
 
 
-def get_deep_learning_models(vocab_size=20000, max_len=500, embed_dim=512, num_heads=4):
+def get_deep_learning_models(vocab_size=20000, max_len=700, embed_dim=512, num_heads=4):
     """
     Returns a dictionary of deep learning models with their names as keys.
     """
@@ -42,7 +42,7 @@ def get_deep_learning_models(vocab_size=20000, max_len=500, embed_dim=512, num_h
     models["Simple Feedforward"] = Sequential(
         [
             # lets increase the complexity of the model
-            Dense(128, activation="relu", input_shape=(500,)),
+            Dense(128, activation="relu", input_shape=(max_len,)),
             Dropout(0.5),
             BatchNormalization(),
             Dense(64, activation="relu"),

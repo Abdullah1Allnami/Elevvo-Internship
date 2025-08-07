@@ -9,7 +9,11 @@ import numpy as np
 def preprocess_data(df):
     df = df.dropna()
     X = clean_text(df["review"])
-    y = df[X.index, "sentiment"].map({"positive": 1, "negative": 0}).astype("float32")
+    y = (
+        df.loc[X.index, "sentiment"]
+        .map({"positive": 1, "negative": 0})
+        .astype("float32")
+    )
 
     # Get both representations
     X_tfidf = get_embeddings(X, method="tfidf")
