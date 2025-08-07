@@ -10,18 +10,28 @@ def train_models(X_tfidf_train, y_train, X_seq_train):
 
     # Train machine learning models on TF-IDF features
     for name, model in ml_models.items():
-        print(f"Training {name} model...")
+        print(f"\nTraining {name} model...")
         model.fit(X_tfidf_train, y_train)
-        print(f"{name} model trained successfully.")
+        print(f"{name} model training completed.")
 
     # Train deep learning models on sequence data
     for name, model in dl_models.items():
-        print(f"Training {name} model...")
+        print(f"\nTraining {name} model...")
         model.compile(
             optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]
         )
-        model.fit(X_seq_train, y_train, epochs=10, batch_size=32, verbose=0)
-        print(f"{name} model trained successfully.")
+        # Add verbose output for deep learning models
+        history = model.fit(
+            X_seq_train,
+            y_train,
+            epochs=10,
+            batch_size=32,
+            verbose=1,  # Set verbose=1 to print progress for each epoch
+        )
+        print(f"{name} model training completed.")
+        # Print training accuracy for each epoch
+        for epoch, acc in enumerate(history.history["accuracy"], 1):
+            print(f"Epoch {epoch}: Training Accuracy = {acc:.4f}")
 
-    print("All models trained successfully.")
+    print("\nAll models trained successfully.")
     return {**ml_models, **dl_models}

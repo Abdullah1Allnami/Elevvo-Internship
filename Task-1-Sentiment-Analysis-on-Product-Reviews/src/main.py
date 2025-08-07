@@ -14,25 +14,24 @@ def main():
     print("*" * 20, "Main", "*" * 20)
 
     # Step 1: Download data
-    data_downloader()
-    print("Data downloaded successfully.")
-
-    # Step 2: Load and limit dataset (for debugging or testing)
-    df = pd.read_csv("./data/IMDB Dataset.csv")
-    # df = df.head(10)
+    print("\nStep 1: Loading dataset...")
+    df = pd.read_csv("/kaggle/input/imdb-dataset-of-50k-movie-reviews/IMDB Dataset.csv")
     print("Data loaded successfully.")
 
-    # Step 3: Preprocess text → returns TF-IDF and Sequence embeddings
+    # Step 2: Preprocess text
+    print("\nStep 2: Preprocessing data...")
     X_tfidf_train, X_tfidf_test, X_seq_train, X_seq_test, y_train, y_test = (
         preprocess_data(df)
     )
     print("Data preprocessed successfully.")
 
-    # Step 4: Train all models
+    # Step 3: Train models
+    print("\nStep 3: Training models...")
     models = train_models(X_tfidf_train, y_train, X_seq_train)
     print("Models trained successfully.")
 
-    # Step 5: Evaluate each model using appropriate test input
+    # Step 4: Evaluate models
+    print("\nStep 4: Evaluating models...")
     accuracy_results = {}
     for name, model in models.items():
         if name in ["Logistic Regression", "Random Forest", "Naive Bayes"]:
@@ -42,13 +41,15 @@ def main():
 
         accuracy = evaluate_model(model, X_test, y_test)
         accuracy_results[name] = accuracy
-        print(f"{name} Accuracy: {accuracy:.2f}")
+        print(f"{name} Accuracy: {accuracy:.4f}")
 
-    print("Model evaluation completed.")
+    print("\nModel evaluation completed.")
     print("Accuracy Results:", accuracy_results)
 
-    # Visualize the most frequent positive and negative words
+    # Step 5: Visualize most frequent words
+    print("\nStep 5: Visualizing most frequent words...")
     visualize_most_frequent_words(df)
+    print("Visualization completed.")
 
     print("*" * 20, "Return", "*" * 20)
 
