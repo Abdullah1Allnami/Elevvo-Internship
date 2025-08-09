@@ -49,7 +49,8 @@ pip install -r requirements.txt
 ## Notebooks
 
 - **EDA.ipynb:** Data exploration and visualization.
-- **task-1-sentiment-analysis-on-product-reviews.ipynb:** Full workflow and experiments.
+- **task-1-sentiment-analysis-on-product-reviews.ipynb:** Full workflow and experiments.  
+  ![Final Accuracy Scores](data/final_accuracy_scores.jpeg)
 
 ## Contributing
 
