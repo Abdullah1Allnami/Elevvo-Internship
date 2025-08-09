@@ -15,7 +15,7 @@ def main():
 
     # Step 1: Download data
     print("\nStep 1: Loading dataset...")
-    df = pd.read_csv("/kaggle/input/imdb-dataset-of-50k-movie-reviews/IMDB Dataset.csv")
+    df = pd.read_csv("/data/IMDB Dataset.csv")
     print("Data loaded successfully.")
 
     # Step 2: Preprocess text
