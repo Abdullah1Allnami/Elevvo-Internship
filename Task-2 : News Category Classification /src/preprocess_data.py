@@ -6,7 +6,11 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 def preprocess_data(df):
     df = df.dropna().drop_duplicates()
-    X = clean_text(df["short_description"])
+
+    feature_cols = ["link", "headline", "short_description", "authors", "date"]
+    X = df[feature_cols].astype(str).agg(" ".join, axis=1)
+    X = clean_text(X)
+
     category_to_idx = {k: i for i, k in enumerate(df["category"].unique())}
     y = df["category"].map(category_to_idx).astype("float32")
 
@@ -28,7 +32,7 @@ def preprocess_data(df):
 
 def clean_text(X):
     # Example cleaning function, modify as needed
-    X = X.str.replace(r"[^a-zA-Z\s]", "", regex=True)
+    X = [x.str.replace(r"[^a-zA-Z\s]", "", regex=True) for x in X]
     print("Text data cleaned successfully.")
     return X
 

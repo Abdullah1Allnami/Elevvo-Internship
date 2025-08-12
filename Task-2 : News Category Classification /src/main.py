@@ -13,8 +13,6 @@ def main():
 
     # convert to pandas DataFrame
     data = pd.DataFrame(data)
-    # select relevant columns
-    data = data[["short_description", "category"]]
 
     print("Data loaded successfully.")
 
