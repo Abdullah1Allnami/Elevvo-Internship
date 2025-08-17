@@ -3,30 +3,22 @@ from sklearn.metrics import accuracy_score
 from tensorflow.keras.models import Model
 
 
-def evaluate_model(model, test_data, test_labels):
+def evaluate_model(model, X_seq_test, y_test):
     """
     Evaluates the given model on the test data and returns the accuracy.
     """
     model_name = model.name if isinstance(model, Model) else model.__class__.__name__
     print(f"\nEvaluating model: {model_name}")
-
-    if hasattr(model, "predict"):
-        if isinstance(model, Model):  # Keras model
-            print("Predicting on test data...")
-            predictions = model.predict(
-                test_data, verbose=1
-            )  # Set verbose=1 to show progress
-            # Convert probabilities to binary class labels (sigmoid output)
-            if predictions.shape[-1] == 1:
-                predictions = (predictions > 0.5).astype("int32").flatten()
-            else:
-                predictions = np.argmax(predictions, axis=-1)
-        else:  # Scikit-learn model
-            print("Predicting on test data...")
-            predictions = model.predict(test_data)
-
-        accuracy = accuracy_score(test_labels, predictions)
-        print(f"{model_name} Accuracy: {accuracy:.4f}")
-        return accuracy
+    predictions = model.predict(X_seq_test)
+    if len(predictions.shape) > 1 and predictions.shape[1] > 1:
+        # For multi-class classification, take the class with the highest probability
+        predictions = np.argmax(predictions, axis=1)
     else:
-        raise ValueError(f"Unsupported model type: {type(model)}")
+        # For binary classification, predictions are already in the correct format
+        predictions = (predictions > 0.5).astype(int)
+
+    test_labels = np.argmax(y_test, axis=1) if len(y_test.shape) > 1 else y_test
+
+    accuracy = accuracy_score(test_labels, predictions)
+    print(f"{model_name} Accuracy: {accuracy:.4f}")
+    return accuracy

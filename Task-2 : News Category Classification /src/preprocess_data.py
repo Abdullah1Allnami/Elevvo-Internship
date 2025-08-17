@@ -2,6 +2,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+import pandas as pd
 
 
 def preprocess_data(df):
@@ -31,25 +32,34 @@ def preprocess_data(df):
 
 
 def clean_text(X):
-    # Example cleaning function, modify as needed
-    X = [x.str.replace(r"[^a-zA-Z\s]", "", regex=True) for x in X]
-    print("Text data cleaned successfully.")
-    return X
+    X = X.str.lower()
+    X = X.str.replace(r"http\S+|www\S+|https\S+", "", regex=True)
+    X = X.str.replace(r"\@\w+|\#", "", regex=True)
+    # Keep numbers and some punctuation
+    X = X.str.replace(r"[^a-zA-Z0-9\s\.\?\!]", "", regex=True)
+    X = X.str.replace(r"\s+", " ", regex=True)
+    return X.str.strip()
 
 
-def get_embeddings(X, method="tfidf", max_features=20000, max_len=500):
+def get_embeddings(X, method="tfidf", max_features=50000, max_len=500):
     if method == "tfidf":
-        vectorizer = TfidfVectorizer(max_features=max_features)
-        X_vec = vectorizer.fit_transform(X)
-        print("TF-IDF embeddings generated successfully.")
-        return X_vec
+        vectorizer = TfidfVectorizer(
+            max_features=max_features,
+            ngram_range=(1, 2),  # Use unigrams and bigrams
+            stop_words="english",
+            min_df=5,
+            max_df=0.7,
+        )
+        return vectorizer.fit_transform(X)
 
     elif method == "sequence":
-        tokenizer = Tokenizer(num_words=max_features, oov_token="<OOV>")
+        tokenizer = Tokenizer(
+            num_words=max_features,
+            oov_token="<OOV>",
+            filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',
+        )
         tokenizer.fit_on_texts(X)
         sequences = tokenizer.texts_to_sequences(X)
-        padded = pad_sequences(
+        return pad_sequences(
             sequences, maxlen=max_len, padding="post", truncating="post"
         )
-        print("Sequence embeddings generated successfully.")
-        return padded
