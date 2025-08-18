@@ -15,15 +15,7 @@ from tensorflow.keras.layers import (
     MultiHeadAttention,
     LayerNormalization,
     Add,
-    Conv1D,
-    MaxPooling1D,
-    Bidirectional,
-    Flatten,
-    concatenate,
-    Layer,
 )
-from transformers import TFAutoModel
-import tensorflow as tf
 
 
 def get_machine_learning_models():
@@ -35,22 +27,21 @@ def get_machine_learning_models():
             n_estimators=200, class_weight="balanced"
         ),
         "Naive Bayes": MultinomialNB(),
+        "XGBoost": XGBClassifier(objective="multi:softmax", use_label_encoder=False),
     }
 
-    return models
 
-
-def get_deep_learning_models(vocab_size=20000, max_len=500, embed_dim=128, num_heads=4):
+def get_deep_learning_models(
+    vocab_size=20000, max_len=500, embed_dim=128, num_heads=4, num_classes=None
+):
     """
     Returns a dictionary of deep learning models with their names as keys.
     """
-    models = {}
-    models["BERT"] = get_pretrained_bert_model(num_classes)
-    models["Enhanced Transformer"] = get_enhanced_transformer_model(num_classes)
-    models["Hypered Model"] = get_hypered_model(num_classes)
 
     if num_classes is None:
         raise ValueError("num_classes must be specified for deep learning models")
+
+    models = {}
 
     # 1. Simple Feedforward
     models["Simple Feedforward"] = Sequential(
@@ -77,7 +68,7 @@ def get_deep_learning_models(vocab_size=20000, max_len=500, embed_dim=128, num_h
     x = Embedding(input_dim=vocab_size, output_dim=embed_dim)(gru_input)
     x = GRU(64)(x)
     x = Dropout(0.5)(x)
-    output = Dense(1, activation="sigmoid")(x)
+    output = Dense(num_classes, activation="sigmoid")(x)
     models["GRU"] = Model(inputs=gru_input, outputs=output)
 
     # 4. Transformer-like Model (simple attention block)
