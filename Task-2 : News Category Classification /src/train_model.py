@@ -2,10 +2,21 @@ from models.get_models import get_machine_learning_models, get_deep_learning_mod
 import tensorflow as tf
 from tests.evaluate_model import evaluate_model
 from transformers import AutoTokenizer
+import tensorflow as tf
+from tests.evaluate_model import evaluate_model
+from transformers import AutoTokenizer
 
 
 def train_and_evaluate_models(
-    X_tfidf_train, X_tfidf_test, X_seq_train, X_seq_test, y_train, y_test, num_classes
+    X_tfidf_train,
+    X_tfidf_test,
+    X_seq_train,
+    X_seq_test,
+    y_train,
+    y_test,
+    num_classes,
+    original_text_train,
+    original_text_test,
 ):
     """
     Trains and returns a dictionary of machine learning and deep learning models.
@@ -14,6 +25,16 @@ def train_and_evaluate_models(
     ml_models = get_machine_learning_models()
     dl_models = get_deep_learning_models(num_classes=num_classes)
     accuracy_results = {}
+    tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+
+    def tokenize_texts(texts):
+        return tokenizer(
+            list(texts),
+            padding="max_length",
+            truncation=True,
+            max_length=500,
+            return_tensors="tf",
+        )
 
     # Train machine learning models on TF-IDF features
     for name, model in ml_models.items():
@@ -28,10 +49,12 @@ def train_and_evaluate_models(
         accuracy_results[name] = accuracy
 
     y_train_onehot = tf.keras.utils.to_categorical(y_train, num_classes=num_classes)
+
     # Train deep learning models on sequence data
     for name, model in dl_models.items():
         print(f"\nTraining {name} model...")
         model.compile(
+            optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"]
             optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"]
         )
         # if the saved_models directory does not exist, create it
@@ -45,20 +68,38 @@ def train_and_evaluate_models(
             mode="max",
         )
 
-        # Add verbose output for deep learning models
+        if name == "BERT":
+            # Tokenize the input sequences for BERT
+            train_encodings = tokenize_texts(original_text_train)
+            test_encodings = tokenize_texts(original_text_test)
+
+            x = [train_encodings["input_ids"], train_encodings["attention_mask"]]
+            X_seq_test = [test_encodings["input_ids"], test_encodings["attention_mask"]]
+
+        else:
+            x = X_seq_train
+
         history = model.fit(
-            X_seq_train,
+            x,
             y_train_onehot,
-            validation_split=0.1,
+            validation_split=0.2,
             epochs=10,
             callbacks=[checkpoint_callback],
             batch_size=32,
-            verbose=1,  # Set verbose=1 to print progress for each epoch
+            callbacks=[checkpoint_callback],
+            verbose=1,
         )
         print(f"{name} model training completed.")
         # Print training accuracy for each epoch
         for epoch, acc in enumerate(history.history["accuracy"], 1):
             print(f"Epoch {epoch}: Training Accuracy = {acc:.4f}")
+
+        # Evaluate training accuracy
+        accuracy = evaluate_model(model, X_seq_test, y_test)
+        print(f"{name} Evaluation Accuracy: {accuracy:.4f}")
+        accuracy_results[name] = accuracy
+
+    print("Evaluation Accuracy Results:", accuracy_results)
 
         # Evaluate training accuracy
         accuracy = evaluate_model(model, X_seq_test, y_test)

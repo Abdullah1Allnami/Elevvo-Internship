@@ -5,21 +5,16 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pandas as pd
 
 
-def preprocess_data(df):
-    df = df.dropna().drop_duplicates()
-
-    feature_cols = ["link", "headline", "short_description", "authors", "date"]
+def preprocess_data(df, feature_cols, target_col):
+    df = df.dropna(subset=feature_cols + [target_col]).drop_duplicates()
     X = df[feature_cols].astype(str).agg(" ".join, axis=1)
     X = clean_text(X)
 
-    category_to_idx = {k: i for i, k in enumerate(df["category"].unique())}
-    y = df["category"].map(category_to_idx).astype("float32")
+    y = df[target_col].astype("float32")  # <- use cleaned df
 
-    # Get both representations
     X_tfidf = get_embeddings(X, method="tfidf")
     X_seq = get_embeddings(X, method="sequence")
 
-    # Split both
     X_tfidf_train, X_tfidf_test, y_train, y_test = train_test_split(
         X_tfidf, y, test_size=0.2, random_state=42
     )
@@ -27,7 +22,6 @@ def preprocess_data(df):
         X_seq, y, test_size=0.2, random_state=42
     )
 
-    print("Data split into training and testing sets successfully.")
     return X_tfidf_train, X_tfidf_test, X_seq_train, X_seq_test, y_train, y_test
 
 
