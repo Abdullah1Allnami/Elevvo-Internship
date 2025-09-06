@@ -1,8 +1,8 @@
-# Fake News Detection using Logistic Regression
+# Fake News Detection with Logistic Regression
 
-This project implements a fake news detection system using logistic regression with comprehensive data preprocessing.
+A robust pipeline for detecting fake news using logistic regression, featuring advanced text preprocessing and model evaluation. This repository includes a comprehensive workflow notebook for step-by-step exploration.
 
-## Project Structure
+## Repository Structure
 
 ```
 Fake News Detection/
@@ -10,118 +10,95 @@ Fake News Detection/
 │   ├── fake.csv          # Fake news dataset
 │   └── true.csv          # True news dataset
 ├── src/
-│   └── preprocess_data.py # Main preprocessing and modeling pipeline
+│   └── preprocess_data.py # Preprocessing and modeling pipeline
+├── model/                # Saved models
+├── notebooks/
+│   └── workflow.ipynb    # End-to-end workflow notebook
+├── requirements.txt      # Python dependencies
 ├── test/
-├── model/                # Directory for saved models
-├── noteboooks/          # Jupyter notebooks (if any)
-├── requirements.txt     # Python dependencies
-├── test_preprocessing.py # Test script
-└── README.md           # This file
+│   └── test_preprocessing.py # Test script
+└── README.md             # Project documentation
 ```
 
-## Features
+## Key Features
 
-- **Comprehensive Text Preprocessing**: 
-  - URL and email removal
-  - Special character cleaning
-  - Text normalization
-  - Duplicate removal
+- **Advanced Text Preprocessing**
+  - Removal of URLs, emails, and special characters
+  - Text normalization and duplicate elimination
 
-- **TF-IDF Vectorization**: 
-  - Configurable n-gram ranges
-  - Stop word removal
+- **TF-IDF Vectorization**
+  - Configurable n-gram ranges and stop word removal
   - Feature selection based on frequency
 
-- **Logistic Regression Model**:
+- **Logistic Regression Modeling**
   - Optimized hyperparameters
-  - Cross-validation ready
+  - Cross-validation support
   - Feature importance analysis
 
-- **Model Evaluation**:
-  - Accuracy metrics
-  - Classification report
-  - Confusion matrix
+- **Comprehensive Evaluation**
+  - Accuracy, classification report, confusion matrix
   - Feature importance visualization
 
-## Installation
+- **Interactive Workflow Notebook**
+  - Explore the entire pipeline in `notebooks/workflow.ipynb`
 
-1. Install required dependencies:
+## Getting Started
+
+### Installation
+
+Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
+NLTK data will be downloaded automatically on first run.
 
-2. The script will automatically download required NLTK data on first run.
+### Usage
 
-## Usage
+#### Run the Pipeline
 
-### Quick Start
-
-Run the complete pipeline:
 ```bash
 python src/preprocess_data.py
 ```
 
-### Test the Pipeline
+#### Run Tests
 
-Run the test script to verify everything works:
 ```bash
-python test_preprocessing.py
+python test/test_preprocessing.py
 ```
 
-### Using the Preprocessor Class
+#### Explore the Workflow
 
-```python
-from src.preprocess_data import FakeNewsPreprocessor
-
-# Initialize preprocessor
-preprocessor = FakeNewsPreprocessor()
-
-# Load and preprocess data
-df = preprocessor.load_data('data/fake.csv', 'data/true.csv')
-df_processed = preprocessor.preprocess_data(df)
-
-# Split data
-X_train, X_test, y_train, y_test = preprocessor.split_data(df_processed)
-
-# Vectorize text
-X_train_tfidf, X_test_tfidf = preprocessor.vectorize_text(X_train, X_test)
-
-# Train model
-model = preprocessor.train_logistic_regression(X_train_tfidf, y_train)
-
-# Evaluate
-y_pred, accuracy = preprocessor.evaluate_model(model, X_test_tfidf, y_test)
+Open and run the notebook for a guided walkthrough:
+```
+notebooks/workflow.ipynb
 ```
 
 ## Data Format
 
-The CSV files should contain the following columns:
-- `title`: News article title
-- `text`: News article content
+CSV files must include:
+- `title`: Article title
+- `text`: Article content
 - `subject`: News category (optional)
 - `date`: Publication date (optional)
 
 ## Model Performance
 
-The logistic regression model typically achieves:
-- High accuracy on the test set
-- Good precision and recall for both fake and true news
+- High test accuracy
+- Strong precision and recall for both fake and true news
 - Interpretable feature importance
 
 ## Customization
 
-You can customize the preprocessing by modifying the `FakeNewsPreprocessor` class:
-
-- **TF-IDF Parameters**: Adjust `max_features`, `ngram_range`, `min_df`, `max_df`
-- **Text Cleaning**: Modify the `clean_text()` method
-- **Model Parameters**: Change logistic regression hyperparameters in `train_logistic_regression()`
+- **TF-IDF**: Adjust `max_features`, `ngram_range`, `min_df`, `max_df`
+- **Text Cleaning**: Edit `clean_text()` in `FakeNewsPreprocessor`
+- **Model Parameters**: Modify logistic regression settings
 
 ## Next Steps
 
-1. **Hyperparameter Tuning**: Use GridSearchCV to optimize model parameters
-2. **Feature Engineering**: Add more text features (sentiment, readability scores)
-3. **Model Comparison**: Try other algorithms (Random Forest, SVM, Neural Networks)
-4. **Model Deployment**: Create a web API for real-time predictions
+- Hyperparameter tuning (GridSearchCV)
+- Feature engineering (sentiment, readability)
+- Model comparison (Random Forest, SVM, Neural Networks)
+- Deployment (web API for real-time predictions)
 
 ## Dependencies
 
