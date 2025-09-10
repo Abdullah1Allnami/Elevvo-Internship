@@ -1,0 +1,143 @@
+# Model Configuration
+model:
+  checkpoint: "bert-base-cased"
+  save_dir: "bert-finetuned-squad-accelerate"
+  load_from_checkpoint: false
+  checkpoint_path: ""
+
+# Training Hyperparameters
+training:
+  num_epochs: 3
+  batch_size: 8
+  learning_rate: 2e-5
+  weight_decay: 0.01
+  warmup_steps: 0
+  max_grad_norm: 1.0
+  gradient_accumulation_steps: 1
+
+# Data Processing
+data:
+  max_length: 384
+  stride: 128
+  preprocessing_num_workers: 4
+  dataloader_num_workers: 2
+  pin_memory: true
+  remove_unused_columns: true
+
+# Tokenization
+tokenizer:
+  padding: "max_length"
+  truncation: "only_second"
+  return_overflowing_tokens: true
+  return_offsets_mapping: true
+
+# Evaluation
+evaluation:
+  n_best: 20
+  max_answer_length: 30
+  eval_batch_size: 8
+  eval_strategy: "epoch"
+  eval_steps: 500 
+  save_strategy: "epoch"
+  logging_steps: 100
+  early_stopping_patience: 3
+  early_stopping_threshold: 0.01
+
+# Answer Selection
+answer_selection:
+  n_best_size: 20
+  max_answer_length: 30
+  min_answer_score: 0.0
+  null_score_diff_threshold: 0.0
+
+# Hardware & Performance
+hardware:
+  mixed_precision: "fp16"  
+  device: "auto"
+  use_cuda: true
+  cuda_device: 0
+  seed: 42
+  deterministic: true
+
+# Logging & Monitoring
+logging:
+  level: "INFO" 
+  wandb:
+    enabled: false
+    project: "question-answering"
+    entity: ""
+    run_name: "bert-squad-finetuning"
+  tensorboard:
+    enabled: false
+    log_dir: "runs"
+
+# Dataset
+dataset:
+  name: "squad"
+  version: "1.1.0"
+  cache_dir: "./data_cache"
+  train_split: "train"
+  validation_split: "validation"
+  test_split: "validation" 
+
+# Paths & Directories
+paths:
+  output_dir: "./outputs"
+  logging_dir: "./logs"
+  cache_dir: "./cache"
+  data_dir: "./data"
+  model_dir: "./models"
+  results_dir: "./results"
+
+# Experiment Tracking
+experiment:
+  name: "bert-squad-experiment"
+  tags: ["bert", "squad", "question-answering"]
+  description: "Fine-tuning BERT on SQuAD dataset for extractive question answering"
+  version: "1.0.0"
+
+# Advanced Training Options
+advanced:
+  lr_scheduler_type: "linear" 
+  optim: "adamw" 
+  gradient_checkpointing: false
+  fp16_full_eval: false
+  resume_from_checkpoint: false
+  dataloader_drop_last: false
+  dataloader_prefetch_factor: 2
+
+# Metrics Calculation
+metrics:
+  squad_v2: false
+  version_2_with_negative: false
+  null_score_diff_threshold: 0.0
+
+# Debugging
+debug:
+  enabled: false
+  max_train_samples: null
+  max_eval_samples: null
+  max_predict_samples: null
+  overwrite_cache: false
+
+# Model Saving
+save:
+  save_steps: 500
+  save_total_limit: 2
+  save_only_model: false
+  save_optimizer: true
+  save_scheduler: true
+
+# Validation
+validation:
+  validation_split_percentage: 0.0  
+  preprocess_validation: true
+  compute_metrics: true
+
+# Inference
+inference:
+  top_k: 1
+  temperature: 1.0
+  do_sample: false
+  num_beams: 1
+  early_stopping: true
